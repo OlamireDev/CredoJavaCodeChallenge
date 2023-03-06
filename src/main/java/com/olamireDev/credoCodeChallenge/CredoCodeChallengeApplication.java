@@ -14,9 +14,7 @@ import java.util.Map;
 
 @SpringBootApplication
 public class CredoCodeChallengeApplication {
-	@Value("${twilo.sid}")
 	public static  String SID;
-	@Value("${twilo.token}")
 	public static  String TOKEN;
 	public static void main(String[] args) {
 		setDetails();

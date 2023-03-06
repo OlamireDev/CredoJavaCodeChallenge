@@ -9,6 +9,7 @@ import com.olamireDev.credoCodeChallenge.model.Account;
 import com.olamireDev.credoCodeChallenge.model.Transaction;
 import com.olamireDev.credoCodeChallenge.repository.AccountRepository;
 import com.olamireDev.credoCodeChallenge.repository.TransactionRepository;
+import com.olamireDev.credoCodeChallenge.service.NotificationService;
 import com.olamireDev.credoCodeChallenge.service.TransactionService;
 import com.olamireDev.credoCodeChallenge.util.Validator;
 import lombok.AllArgsConstructor;
@@ -20,8 +21,9 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class TransactionServiceImpl implements TransactionService {
-    private AccountRepository accountRepository;
-    private TransactionRepository transactionRepository;
+    private final AccountRepository accountRepository;
+    private final TransactionRepository transactionRepository;
+    private  final NotificationService notificationService;
     @Override
     public String depositWithdraw(int type, String phoneNumber, String input) {
         String[] inputs = input.split("\\*");
@@ -37,9 +39,11 @@ public class TransactionServiceImpl implements TransactionService {
                     Account dbAccount = oDBAccount.get();
                     if(type == 1){
                         dbAccount.setWallet(dbAccount.getWallet().add(amount));
+                        notificationService.sendMessage(phoneNumber,  amount, dbAccount.getFirstname(),1);
                     }else {
                         if(dbAccount.getWallet().compareTo(amount) >=0) {
                             dbAccount.setWallet(dbAccount.getWallet().subtract(amount));
+                            notificationService.sendMessage(phoneNumber,  amount, dbAccount.getFirstname(),1);
                         }
                         else {
                             return  TransactionResponses.INVALID_AMOUNT.getOutput();
