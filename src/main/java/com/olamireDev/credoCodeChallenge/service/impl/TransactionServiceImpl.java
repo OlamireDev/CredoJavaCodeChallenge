@@ -38,7 +38,12 @@ public class TransactionServiceImpl implements TransactionService {
                     if(type == 1){
                         dbAccount.setWallet(dbAccount.getWallet().add(amount));
                     }else {
-                        dbAccount.setWallet(dbAccount.getWallet().subtract(amount));
+                        if(dbAccount.getWallet().compareTo(amount) >=0) {
+                            dbAccount.setWallet(dbAccount.getWallet().subtract(amount));
+                        }
+                        else {
+                            return  TransactionResponses.INVALID_AMOUNT.getOutput();
+                        }
                     }
                     dbAccount = accountRepository.save(dbAccount);
                     Transaction transaction = new Transaction(dbAccount, amount, transactionType);
